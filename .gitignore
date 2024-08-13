@@ -1,2 +1,4 @@
 Trash/
 hadoop1/
+logs/
+hadoop_to_spark/tests
