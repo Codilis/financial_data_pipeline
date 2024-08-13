@@ -15,3 +15,5 @@ $HADOOP_HOME/sbin/start-dfs.sh;
 $HADOOP_HOME/sbin/start-yarn.sh;
 hdfs dfs -mkdir /user
 hdfs dfs -mkdir /user/root
+$SPARK_HOME/sbin/start-thriftserver.sh --master local[*]
+sh /hadoop/load-data.sh
