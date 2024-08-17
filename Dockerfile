@@ -4,12 +4,15 @@ FROM python:3.9-bullseye
 # Set environment variables
 ENV SPARK_VERSION=3.5.1 \
 	SPARK_HADOOP_VERSION=3 \
+	SPARK_HOME=/opt/spark \
 	HADOOP_VERSION=3.3.6 \
 	HADOOP_HOME=/opt/hadoop \
 	JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64 \
-	SPARK_HOME=/opt/spark
+	SCALA_VERSION="2.13-3.8.0" \
+	KAFKA_VERSION="3.8.0" \
+	KAFKA_HOME="/opt/kafka"
 
-# Install Java (required for Spark)
+	# Install Java (required for Spark)
 RUN apt-get update && \
 	apt-get install -y --no-install-recommends \
 	sudo \
@@ -19,12 +22,14 @@ RUN apt-get update && \
 	openjdk-11-jdk \
 	build-essential \
 	software-properties-common \
+	net-tools dnsutils iproute2 iputils-ping \
 	ssh && \
 	apt-get clean && \
 	rm -rf /var/lib/apt/lists/*
 
 RUN curl https://downloads.apache.org/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz -o hadoop.tar.gz
 RUN curl https://archive.apache.org/dist/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop${SPARK_HADOOP_VERSION}.tgz -o spark-${SPARK_VERSION}-bin-hadoop${SPARK_HADOOP_VERSION}.tgz
+RUN curl https://downloads.apache.org/kafka/${KAFKA_VERSION}/kafka_${SCALA_VERSION}.tgz -o kafka_${SCALA_VERSION}.tgz
 RUN wget http://www.nano-editor.org/dist/v2.4/nano-2.4.2.tar.gz
 
 # Install Python Libraries
@@ -73,6 +78,16 @@ ENV PATH=$PATH:$HADOOP_HOME/sbin:$HADOOP_HOME/bin
 ENV HADOOP_COMMON_LIB_NATIVE_DIR=$HADOOP_HOME/lib/native
 ENV HADOOP_OPTS="-Djava.library.path=$HADOOP_HOME/lib/native"
 
+# Kafka Install
+RUN	tar -xzf kafka_${SCALA_VERSION}.tgz -C /opt
+RUN	mv /opt/kafka_${SCALA_VERSION} /opt/kafka
+RUN	rm kafka_${SCALA_VERSION}.tgz
+RUN mkdir -p /checkpoint/dev/financial_data_pipeline/transactions_stream/
+
+ENV PATH="${KAFKA_HOME}/bin:${PATH}"
+ENV KAFKA_TOPIC="transactions_stream"
+
+
 RUN mkdir -p /root/.dbt
 
 COPY src/config/core-site.xml $HADOOP_HOME/etc/hadoop/core-site.xml
@@ -83,7 +98,11 @@ COPY src/config/hadoop-env.sh $HADOOP_HOME/etc/hadoop/hadoop-env.sh
 COPY src/config/profiles.yml /root/.dbt/profiles.yml
 COPY src/config/core-site.xml $SPARK_HOME/conf/core-site.xml
 COPY src/config/hdfs-site.xml $SPARK_HOME/conf/hdfs-site.xml
-COPY src/hadoop hadoop
+COPY src/config/server.properties ${KAFKA_HOME}/config/server.properties
+COPY src/config/server-1.properties ${KAFKA_HOME}/config/server-1.properties
+COPY src/config/server-2.properties ${KAFKA_HOME}/config/server-2.properties
+COPY src/config/zookeeper.properties ${KAFKA_HOME}/config/zookeeper.properties
+COPY src/setup setup
 COPY data data
 
 # Set the working directory
@@ -96,6 +115,11 @@ EXPOSE 4040
 EXPOSE 8088
 # Hadoop NameNode Web UI
 EXPOSE 9870
+# Expose ports for Zookeeper and Kafka
+EXPOSE 2181
+EXPOSE 9092
+EXPOSE 9093
+EXPOSE 9094
 
 
 ENTRYPOINT sh /hadoop/start-hadoop.sh && bash
