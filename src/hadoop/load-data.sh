@@ -1,13 +1,13 @@
 #!/bin/bash
 set -e
 
-hdfs dfs -mkdir financial_data
+hdfs dfs -mkdir data
 
-hdfs dfs -put financial_dataset/accounts.csv financial_data/accounts.csv
-hdfs dfs -put financial_dataset/cards.csv financial_data/cards.csv
-hdfs dfs -put financial_dataset/clients.csv financial_data/clients.csv
-hdfs dfs -put financial_dataset/disps.csv financial_data/disps.csv
-hdfs dfs -put financial_dataset/districts.csv financial_data/districts.csv
-hdfs dfs -put financial_dataset/loans.csv financial_data/loans.csv
-hdfs dfs -put financial_dataset/orders.csv financial_data/orders.csv
-hdfs dfs -put financial_dataset/tkeys.csv financial_data/tkeys.csv
+hdfs dfs -put /data/accounts.csv data/accounts.csv
+hdfs dfs -put /data/cards.csv data/cards.csv
+hdfs dfs -put /data/clients.csv data/clients.csv
+hdfs dfs -put /data/disps.csv data/disps.csv
+hdfs dfs -put /data/districts.csv data/districts.csv
+hdfs dfs -put /data/loans.csv data/loans.csv
+hdfs dfs -put /data/orders.csv data/orders.csv
+hdfs dfs -put /data/tkeys.csv data/tkeys.csv

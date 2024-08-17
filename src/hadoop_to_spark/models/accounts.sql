@@ -6,7 +6,7 @@ WITH source_data AS (
     SELECT
         *
     FROM
-        csv.`/user/root/financial_data/accounts.csv`
+        csv.`/user/root/data/accounts.csv`
 )
 
 SELECT

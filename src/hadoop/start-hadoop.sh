@@ -17,3 +17,5 @@ hdfs dfs -mkdir /user
 hdfs dfs -mkdir /user/root
 $SPARK_HOME/sbin/start-thriftserver.sh --master local[*]
 sh /hadoop/load-data.sh
+rm -rf /data
+rm -rf /hadoop

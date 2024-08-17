@@ -14,7 +14,6 @@ RUN apt-get update && \
 	apt-get install -y --no-install-recommends \
 	sudo \
 	curl \
-	vim \
 	unzip \
 	rsync \
 	openjdk-11-jdk \
@@ -25,11 +24,13 @@ RUN apt-get update && \
 	rm -rf /var/lib/apt/lists/*
 
 RUN curl https://downloads.apache.org/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz -o hadoop.tar.gz
-RUN curl https://dlcdn.apache.org/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop${SPARK_HADOOP_VERSION}.tgz -o spark-${SPARK_VERSION}-bin-hadoop${SPARK_HADOOP_VERSION}.tgz
+RUN curl https://archive.apache.org/dist/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop${SPARK_HADOOP_VERSION}.tgz -o spark-${SPARK_VERSION}-bin-hadoop${SPARK_HADOOP_VERSION}.tgz
 RUN wget http://www.nano-editor.org/dist/v2.4/nano-2.4.2.tar.gz
 
-# Install dbt-core and dbt-spark
-RUN pip install --no-cache-dir dbt-core==1.8.5 dbt-spark==1.8.0 markupsafe==2.0.1
+# Install Python Libraries
+COPY requirments.txt requirments.txt
+RUN pip install --no-cache-dir -r requirments.txt
+RUN rm requirments.txt
 
 # Install nano
 RUN tar -xzf nano-2.4.2.tar.gz
@@ -72,18 +73,21 @@ ENV PATH=$PATH:$HADOOP_HOME/sbin:$HADOOP_HOME/bin
 ENV HADOOP_COMMON_LIB_NATIVE_DIR=$HADOOP_HOME/lib/native
 ENV HADOOP_OPTS="-Djava.library.path=$HADOOP_HOME/lib/native"
 
+RUN mkdir -p /root/.dbt
 
-COPY config/core-site.xml $HADOOP_HOME/etc/hadoop/core-site.xml
-COPY config/hdfs-site.xml $HADOOP_HOME/etc/hadoop/hdfs-site.xml
-COPY config/mapred-site.xml $HADOOP_HOME/etc/hadoop/mapred-site.xml
-COPY config/yarn-site.xml $HADOOP_HOME/etc/hadoop/yarn-site.xml
-COPY config/hadoop-env.sh $HADOOP_HOME/etc/hadoop/hadoop-env.sh
-COPY hadoop hadoop
-
-
+COPY src/config/core-site.xml $HADOOP_HOME/etc/hadoop/core-site.xml
+COPY src/config/hdfs-site.xml $HADOOP_HOME/etc/hadoop/hdfs-site.xml
+COPY src/config/mapred-site.xml $HADOOP_HOME/etc/hadoop/mapred-site.xml
+COPY src/config/yarn-site.xml $HADOOP_HOME/etc/hadoop/yarn-site.xml
+COPY src/config/hadoop-env.sh $HADOOP_HOME/etc/hadoop/hadoop-env.sh
+COPY src/config/profiles.yml /root/.dbt/profiles.yml
+COPY src/config/core-site.xml $SPARK_HOME/conf/core-site.xml
+COPY src/config/hdfs-site.xml $SPARK_HOME/conf/hdfs-site.xml
+COPY src/hadoop hadoop
+COPY data data
 
 # Set the working directory
-WORKDIR /financial_dataset
+WORKDIR /shared_volume
 
 # Expose necessary ports
 # Spark Web UI
@@ -94,4 +98,4 @@ EXPOSE 8088
 EXPOSE 9870
 
 
-ENTRYPOINT sh hadoop/start-hadoop.sh && bash
+ENTRYPOINT sh /hadoop/start-hadoop.sh && bash
