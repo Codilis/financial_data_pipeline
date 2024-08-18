@@ -82,7 +82,6 @@ ENV HADOOP_OPTS="-Djava.library.path=$HADOOP_HOME/lib/native"
 RUN	tar -xzf kafka_${SCALA_VERSION}.tgz -C /opt
 RUN	mv /opt/kafka_${SCALA_VERSION} /opt/kafka
 RUN	rm kafka_${SCALA_VERSION}.tgz
-RUN mkdir -p /checkpoint/dev/financial_data_pipeline/transactions_stream/
 
 ENV PATH="${KAFKA_HOME}/bin:${PATH}"
 ENV KAFKA_TOPIC="transactions_stream"
@@ -98,9 +97,8 @@ COPY src/config/hadoop-env.sh $HADOOP_HOME/etc/hadoop/hadoop-env.sh
 COPY src/config/profiles.yml /root/.dbt/profiles.yml
 COPY src/config/core-site.xml $SPARK_HOME/conf/core-site.xml
 COPY src/config/hdfs-site.xml $SPARK_HOME/conf/hdfs-site.xml
+COPY src/config/log4j.properties $SPARK_HOME/conf/log4j.properties
 COPY src/config/server.properties ${KAFKA_HOME}/config/server.properties
-COPY src/config/server-1.properties ${KAFKA_HOME}/config/server-1.properties
-COPY src/config/server-2.properties ${KAFKA_HOME}/config/server-2.properties
 COPY src/config/zookeeper.properties ${KAFKA_HOME}/config/zookeeper.properties
 COPY src/setup setup
 COPY data data
@@ -122,4 +120,4 @@ EXPOSE 9093
 EXPOSE 9094
 
 
-ENTRYPOINT sh /hadoop/start-hadoop.sh && bash
+ENTRYPOINT sh /setup/main.sh && bash

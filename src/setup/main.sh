@@ -13,3 +13,4 @@ echo "Data loaded in hadoop";
 sh /setup/start-kafka.sh;
 rm -rf /data;
 rm -rf /setup;
+clear;
