@@ -96,7 +96,7 @@ COPY src/config/hadoop/yarn-site.xml $HADOOP_HOME/etc/hadoop/yarn-site.xml
 COPY src/config/hadoop/hadoop-env.sh $HADOOP_HOME/etc/hadoop/hadoop-env.sh
 COPY src/config/dbt/profiles.yml /root/.dbt/profiles.yml
 COPY src/config/hadoop/core-site.xml $SPARK_HOME/conf/core-site.xml
-COPY src/config/spark/hadoop/hdfs-site.xml $SPARK_HOME/conf/hdfs-site.xml
+COPY src/config/hadoop/hdfs-site.xml $SPARK_HOME/conf/hdfs-site.xml
 COPY src/config/spark/log4j.properties $SPARK_HOME/conf/log4j.properties
 COPY src/config/kafka/server.properties ${KAFKA_HOME}/config/server.properties
 COPY src/config/kafka/zookeeper.properties ${KAFKA_HOME}/config/zookeeper.properties
