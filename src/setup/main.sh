@@ -11,6 +11,7 @@ echo "Hadoop setup done";
 sh /setup/load-data.sh;
 echo "Data loaded in hadoop";
 sh /setup/start-kafka.sh;
+sh /setup/start-airflow.sh;
 rm -rf /data;
 rm -rf /setup;
 clear;

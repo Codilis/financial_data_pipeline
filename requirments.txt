@@ -1,6 +1,7 @@
 dbt-core==1.8.5
 dbt-spark==1.8.0
-markupsafe==2.0.1
 dbt-spark[PyHive]
 pyspark
 kafka-python
+pandas
+apache-airflow==2.9.0
