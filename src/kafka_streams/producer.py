@@ -34,6 +34,10 @@ def read_csv_and_send_to_kafka(file_path):
 
 
 if __name__ == "__main__":
+    if KAFKA_TOPIC == '':
+        print("Topic Value is empty")
+        exit(0)
+
     try:
         # Call the function to read CSV and send data to Kafka
         read_csv_and_send_to_kafka(CSV_FILE_PATH)
