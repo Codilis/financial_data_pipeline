@@ -89,17 +89,17 @@ ENV KAFKA_TOPIC="transactions_stream"
 
 RUN mkdir -p /root/.dbt
 
-COPY src/config/core-site.xml $HADOOP_HOME/etc/hadoop/core-site.xml
-COPY src/config/hdfs-site.xml $HADOOP_HOME/etc/hadoop/hdfs-site.xml
-COPY src/config/mapred-site.xml $HADOOP_HOME/etc/hadoop/mapred-site.xml
-COPY src/config/yarn-site.xml $HADOOP_HOME/etc/hadoop/yarn-site.xml
-COPY src/config/hadoop-env.sh $HADOOP_HOME/etc/hadoop/hadoop-env.sh
-COPY src/config/profiles.yml /root/.dbt/profiles.yml
-COPY src/config/core-site.xml $SPARK_HOME/conf/core-site.xml
-COPY src/config/hdfs-site.xml $SPARK_HOME/conf/hdfs-site.xml
-COPY src/config/log4j.properties $SPARK_HOME/conf/log4j.properties
-COPY src/config/server.properties ${KAFKA_HOME}/config/server.properties
-COPY src/config/zookeeper.properties ${KAFKA_HOME}/config/zookeeper.properties
+COPY src/config/hadoop/core-site.xml $HADOOP_HOME/etc/hadoop/core-site.xml
+COPY src/config/hadoop/hdfs-site.xml $HADOOP_HOME/etc/hadoop/hdfs-site.xml
+COPY src/config/hadoop/mapred-site.xml $HADOOP_HOME/etc/hadoop/mapred-site.xml
+COPY src/config/hadoop/yarn-site.xml $HADOOP_HOME/etc/hadoop/yarn-site.xml
+COPY src/config/hadoop/hadoop-env.sh $HADOOP_HOME/etc/hadoop/hadoop-env.sh
+COPY src/config/dbt/profiles.yml /root/.dbt/profiles.yml
+COPY src/config/hadoop/core-site.xml $SPARK_HOME/conf/core-site.xml
+COPY src/config/spark/hadoop/hdfs-site.xml $SPARK_HOME/conf/hdfs-site.xml
+COPY src/config/spark/log4j.properties $SPARK_HOME/conf/log4j.properties
+COPY src/config/kafka/server.properties ${KAFKA_HOME}/config/server.properties
+COPY src/config/kafka/zookeeper.properties ${KAFKA_HOME}/config/zookeeper.properties
 COPY src/setup setup
 COPY data data
 
@@ -118,6 +118,7 @@ EXPOSE 2181
 EXPOSE 9092
 EXPOSE 9093
 EXPOSE 9094
-
+# Airflow Web UI
+EXPOSE 8085
 
 ENTRYPOINT sh /setup/main.sh && bash
