@@ -1,6 +1,6 @@
 Trash/
 hadoop1/
 logs/
-hadoop_to_spark/tests
+silver_zone_dbt/tests
 shared_volume/
 **/__pycache__

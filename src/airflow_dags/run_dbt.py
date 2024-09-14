@@ -23,7 +23,7 @@ dbt_dag = DAG(
 
 run_dbt = BashOperator(
     task_id='run_dbt',
-    bash_command='cd /src/hadoop_to_spark && dbt run --exclude transactions',
+    bash_command='cd /src/silver_zone_dbt && dbt run --exclude transactions',
     dag=dbt_dag
 )
 
@@ -36,7 +36,7 @@ run_transactions_consumer = BashOperator(
 
 run_dbt_transactions = BashOperator(
     task_id='kafka_producer_check',
-    bash_command='cd /src/hadoop_to_spark && dbt run --select transactions',
+    bash_command='cd /src/silver_zone_dbt && dbt run --select transactions',
     dag=dbt_dag
 )
 
