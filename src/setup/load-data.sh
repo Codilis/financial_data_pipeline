@@ -10,4 +10,3 @@ hdfs dfs -put /data/disps.csv data/disps.csv
 hdfs dfs -put /data/districts.csv data/districts.csv
 hdfs dfs -put /data/loans.csv data/loans.csv
 hdfs dfs -put /data/orders.csv data/orders.csv
-hdfs dfs -put /data/tkeys.csv data/tkeys.csv
