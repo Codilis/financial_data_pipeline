@@ -4,3 +4,6 @@ logs/
 silver_zone_dbt/tests
 shared_volume/
 **/__pycache__
+**/spark-warehouse/
+**/ipynb_checkpoints
+**/*.ipynb

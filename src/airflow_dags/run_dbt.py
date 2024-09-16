@@ -1,5 +1,4 @@
 from airflow import DAG
-from airflow.utils.dates import days_ago
 from airflow.operators.bash import BashOperator
 from datetime import datetime, timedelta
 
@@ -21,24 +20,18 @@ dbt_dag = DAG(
     schedule_interval=timedelta(days=1),
 )
 
-run_dbt = BashOperator(
-    task_id='run_dbt',
-    bash_command='cd /src/silver_zone_dbt && dbt run --exclude transactions',
-    dag=dbt_dag
-)
-
 run_transactions_consumer = BashOperator(
-    task_id='transactions_consumer',
-    bash_command='cd /src/kafka_streams && spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.1.2 consumer.py',
+    task_id='run_transactions_consumer',
+    bash_command='cd /shared_volume && spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.1.2 /src/kafka_streams/consumer.py',
     dag=dbt_dag
 )
 
 
-run_dbt_transactions = BashOperator(
-    task_id='kafka_producer_check',
-    bash_command='cd /src/silver_zone_dbt && dbt run --select transactions',
+load_silver_zone = BashOperator(
+    task_id='load_silver_zone',
+    bash_command='cd /shared_volume && $SPARK_HOME/sbin/stop-thriftserver.sh && spark-submit /src/load_silver_zone/main.py && $SPARK_HOME/sbin/start-thriftserver.sh --master local[*]',
     dag=dbt_dag
 )
 
 
-run_dbt >> run_transactions_consumer >> run_dbt_transactions
+run_transactions_consumer >> load_silver_zone

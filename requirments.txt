@@ -5,3 +5,4 @@ pyspark
 kafka-python
 pandas
 apache-airflow==2.9.0
+sh

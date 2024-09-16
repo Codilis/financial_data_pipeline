@@ -12,7 +12,7 @@ spark = SparkSession.builder \
 
 # schema for the incoming data
 schema = """
-    id LONG,
+    trans_id LONG,
     account_id STRING,
     date DATE,
     type STRING,
